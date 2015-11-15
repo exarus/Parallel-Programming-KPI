@@ -8,11 +8,10 @@
 #include "targetver.h"
 
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <functional>
 #include <tchar.h>
 #include <string>
-#include <functional>
 
 #include <Windows.h>
 #undef max
@@ -20,6 +19,3 @@
 
 #include <armadillo>
 
-
-
-// TODO: reference additional headers your program requires here

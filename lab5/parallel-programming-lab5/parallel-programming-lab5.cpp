@@ -14,8 +14,9 @@
 
 #include "stdafx.h"
 
-using std::cout;
+using std::cerr;
 using std::endl;
+using std::vector;
 
 using arma::vec;
 using arma::mat;
@@ -32,73 +33,107 @@ struct NumberedFunction
 };
 
 DWORD WINAPI InvokeAndPrint(LPVOID args);
+vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks);
+void WaitAndCloseThreads(const vector<HANDLE> &thread_handles);
 
-const uint_fast32_t kThreadsNum = 3;
 const uint_fast32_t kDefaultMatrixSize = 4;
-const uint_fast32_t kMinSleepTime = 300;
+const uint_fast32_t kMinSleepTime = 700;
 
 int main(int argc, char* argv[])
 {
-	auto size = kDefaultMatrixSize;
-	if (argc > 1)
+	size_t size;
+	try
 	{
-		try
-		{
-			size = std::stoi(argv[1]);
-		}
-		catch (std::invalid_argument)
-		{
-			std::cerr << "Matrix size argument should be an integer. Passed instead: " << argv[1];
-			ExitProcess(1);
-		}
+		size = argc > 1 ? std::stoi(argv[1]) : kDefaultMatrixSize;
+	}
+	catch (std::invalid_argument)
+	{
+		cerr << "Matrix size argument should be an integer. Passed instead: " << argv[1] << endl;
+		ExitProcess(1);
 	}
 
-	rowvec A = ones<rowvec>(size), B = ones<rowvec>(size), C = ones<rowvec>(size);
-	colvec S = ones<colvec>(size);
-	mat MA = ones(size, size), MD = ones(size, size), MK = ones(size, size),
-		ML = ones(size, size), MO = ones(size, size), MT = ones(size, size),
-		MR = ones(size, size), MW = ones(size, size), MV = ones(size, size);
-
-	NumberedFunction<double()> tasks[]{
-		{1, [&]{ return dot(A + B, C * (MA * MD));             }},
-		{2, [&]{ return (MK * ML - MO).max();                  }},
+	const rowvec A = ones<rowvec>(size), B = ones<rowvec>(size), C = ones<rowvec>(size);
+	const colvec S = ones<colvec>(size);
+	const mat MA = ones(size, size), MD = ones(size, size), MK = ones(size, size),
+	          ML = ones(size, size), MO = ones(size, size), MT = ones(size, size),
+	          MR = ones(size, size), MW = ones(size, size), MV = ones(size, size);
+	vector<NumberedFunction<double()>> tasks{
+		{1, [&]{ return dot(A + B, C * (MA * MD)); }},
+		{2, [&]{ return (MK * ML - MO).max(); }},
 		{3, [&]{ return (MR * S).max() + (MT * MW + MV).min(); }},
 	};
 
-	DWORD thread_ids[kThreadsNum];
-	HANDLE thread_handles[kThreadsNum];
-	for (size_t i = 0; i < kThreadsNum; i++)
-	{
-		thread_handles[i] = CreateThread(nullptr, 0, InvokeAndPrint, &tasks[i], 0, &thread_ids[i]);
-
-		// Check the return value for success.
-		if (thread_handles[i] == nullptr)
-		{
-			std::cerr << "Creating Thread " << i << " failed.";
-			ExitProcess(2);
-		}
-	}
-
-	// Wait until all threads have terminated.
-	WaitForMultipleObjects(kThreadsNum, thread_handles, TRUE, INFINITE);
-	cout << "Threads joined." << endl;
-
-	// Close all thread handles and free memory allocations.
-	for (size_t i = 0; i < kThreadsNum; i++)
-	{
-		CloseHandle(thread_handles[i]);
-	}
-	cout << "Handles closed." << endl;
-
+	WaitAndCloseThreads(StartThreads(tasks));
 	return 0;
 }
 
 DWORD WINAPI InvokeAndPrint(LPVOID args)
 {
 	auto func = reinterpret_cast<NumberedFunction<double()>*>(args);
-	cout << "Task " + std::to_string(func->num) + " started." << endl;
+	_tprintf(TEXT("Task %u started.\n"), func->num);
 	Sleep(func->num * kMinSleepTime);
-	cout << func->function() << endl;
-	cout << "Task " + std::to_string(func->num) + " finished." << endl;
+	_tprintf(TEXT("%.1f\nTask %u finished.\n"), func->function(), func->num);
 	return 0;
 }
+
+vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks)
+{
+	vector<HANDLE> thread_handles(tasks.size());
+	DWORD thread_id;
+	for (size_t i = 0; i < tasks.size(); i++)
+	{
+		// Create Thread and check for success.
+		thread_handles[i] = CreateThread(nullptr, 0, InvokeAndPrint, &tasks[i], CREATE_SUSPENDED, &thread_id);
+		if (thread_handles[i] == nullptr)
+		{
+			cerr << "Creating Thread " << i + 1 << " failed." << endl;
+			ExitProcess(2);
+		}
+		_tprintf(TEXT("Created Thread %u with id %ul.\n"), i + 1, thread_id);
+
+		if (!SetThreadPriority(thread_handles[i], THREAD_PRIORITY_ABOVE_NORMAL))
+		{
+			cerr << "Setting priority for Thread " << i + 1 << " failed." << endl;
+			ExitProcess(3);
+		}
+
+		// Suspending and Resuming Thread
+		DWORD suspended_count;
+		for (size_t j = 0; j <= i; j++)
+		{
+			suspended_count = SuspendThread(thread_handles[i]);
+			if (suspended_count == -1)
+			{
+				cerr << "Suspending Thread " << i + 1 << " failed. "
+					"Suspended count: " << suspended_count << endl;
+				ExitProcess(4);
+			}
+		}
+		do
+		{
+			suspended_count = ResumeThread(thread_handles[i]);
+		} while (suspended_count != 1 && suspended_count != -1);
+		if (suspended_count != 1)
+		{
+			cerr << "Resuming Thread " << i + 1 << " failed. "
+				"Suspended count: " << suspended_count << endl;
+			ExitProcess(5);
+		}
+	}
+	return thread_handles;
+}
+
+void WaitAndCloseThreads(const vector<HANDLE> &thread_handles)
+{
+	// Wait until all threads have terminated.
+	WaitForMultipleObjects(thread_handles.size(), thread_handles.data(), TRUE, INFINITE);
+	_tprintf(TEXT("Threads joined.\n"));
+
+	// Close all thread handles and free memory allocations.
+	for (size_t i = 0; i < thread_handles.size(); i++)
+	{
+		CloseHandle(thread_handles[i]);
+	}
+	_tprintf(TEXT("Handles closed.\n"));
+}
+
