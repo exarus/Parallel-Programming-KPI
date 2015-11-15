@@ -1,0 +1,9 @@
+# generated files
+obj/
+lst/
+
+# Object file
+*.o
+
+# Ada Library Information
+*.ali
