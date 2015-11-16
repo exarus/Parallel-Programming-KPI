@@ -14,7 +14,7 @@
 
 #include "stdafx.h"
 
-using std::cerr;
+using std::wcerr;
 using std::endl;
 using std::vector;
 
@@ -39,7 +39,7 @@ void WaitAndCloseThreads(const vector<HANDLE> &thread_handles);
 const uint_fast32_t kDefaultMatrixSize = 4;
 const uint_fast32_t kMinSleepTime = 700;
 
-int main(int argc, char* argv[])
+int main(int argc, TCHAR* argv[])
 {
 	size_t size;
 	try
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 	}
 	catch (std::invalid_argument)
 	{
-		cerr << "Matrix size argument should be an integer. Passed instead: " << argv[1] << endl;
+		wcerr << _T("Matrix size argument should be an integer. Passed instead: ") << argv[1] << endl;
 		ExitProcess(1);
 	}
 
@@ -70,9 +70,9 @@ int main(int argc, char* argv[])
 DWORD WINAPI InvokeAndPrint(LPVOID args)
 {
 	auto func = reinterpret_cast<NumberedFunction<double()>*>(args);
-	_tprintf(TEXT("Task %u started.\n"), func->num);
+	_tprintf(_T("Task %u started.\n"), func->num);
 	Sleep(func->num * kMinSleepTime);
-	_tprintf(TEXT("%.1f\nTask %u finished.\n"), func->function(), func->num);
+	_tprintf(_T("%.1f\nTask %u finished.\n"), func->function(), func->num);
 	return 0;
 }
 
@@ -86,14 +86,14 @@ vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks)
 		thread_handles[i] = CreateThread(nullptr, 0, InvokeAndPrint, &tasks[i], CREATE_SUSPENDED, &thread_id);
 		if (thread_handles[i] == nullptr)
 		{
-			cerr << "Creating Thread " << i + 1 << " failed." << endl;
+			wcerr << _T("Creating Thread ") << i + 1 << _T(" failed.") << endl;
 			ExitProcess(2);
 		}
-		_tprintf(TEXT("Created Thread %u with id %ul.\n"), i + 1, thread_id);
+		_tprintf(_T("Created Thread %u with id %lu.\n"), i + 1, thread_id);
 
 		if (!SetThreadPriority(thread_handles[i], THREAD_PRIORITY_ABOVE_NORMAL))
 		{
-			cerr << "Setting priority for Thread " << i + 1 << " failed." << endl;
+			wcerr << _T("Setting priority for Thread ") << i + 1 << _T(" failed.") << endl;
 			ExitProcess(3);
 		}
 
@@ -104,8 +104,8 @@ vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks)
 			suspended_count = SuspendThread(thread_handles[i]);
 			if (suspended_count == -1)
 			{
-				cerr << "Suspending Thread " << i + 1 << " failed. "
-					"Suspended count: " << suspended_count << endl;
+				wcerr << _T("Suspending Thread ") << i + 1 << _T(" failed. ")
+					_T("Suspended count: ") << suspended_count << endl;
 				ExitProcess(4);
 			}
 		}
@@ -115,8 +115,8 @@ vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks)
 		} while (suspended_count != 1 && suspended_count != -1);
 		if (suspended_count != 1)
 		{
-			cerr << "Resuming Thread " << i + 1 << " failed. "
-				"Suspended count: " << suspended_count << endl;
+			wcerr << _T("Resuming Thread ") << i + 1 << _T(" failed. ")
+				_T("Suspended count: ") << suspended_count << endl;
 			ExitProcess(5);
 		}
 	}
@@ -127,13 +127,13 @@ void WaitAndCloseThreads(const vector<HANDLE> &thread_handles)
 {
 	// Wait until all threads have terminated.
 	WaitForMultipleObjects(thread_handles.size(), thread_handles.data(), TRUE, INFINITE);
-	_tprintf(TEXT("Threads joined.\n"));
+	_tprintf(_T("Threads joined.\n"));
 
 	// Close all thread handles and free memory allocations.
 	for (size_t i = 0; i < thread_handles.size(); i++)
 	{
 		CloseHandle(thread_handles[i]);
 	}
-	_tprintf(TEXT("Handles closed.\n"));
+	_tprintf(_T("Handles closed.\n"));
 }
 
