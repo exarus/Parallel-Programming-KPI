@@ -12,6 +12,7 @@
 #include <functional>
 #include <tchar.h>
 #include <string>
+#include <vector>
 
 #include <Windows.h>
 #undef max

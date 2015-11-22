@@ -33,4 +33,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\blas_win32_MT.dll" />
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\lapack_win32_MT.dll" />
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\armadillo-6.200.3\include\armadillo" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\blas_win32_MT.lib" />
+    <Library Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\lapack_win32_MT.lib" />
+  </ItemGroup>
 </Project>

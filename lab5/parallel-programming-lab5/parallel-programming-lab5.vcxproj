@@ -71,16 +71,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);E:\lib\c++\cbia.lib.lapack.dyn.rel.x86.12;</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;E:\lib\c++\cbia.lib.lapack.dyn.rel.x86.12;E:\lib\c++;</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\lib\armadillo\include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;..\..\lib\LAPACK_Release_x86;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);E:\proj\2015\mixed\parallel-programming\lab5\parallel-programming-lab5\lib\armadillo</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;E:\proj\2015\mixed\parallel-programming\lab5\parallel-programming-lab5\lib\cbia.lib.lapack.dyn.rel.x86.12</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\lib\armadillo\include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;..\..\lib\LAPACK_Release_x86;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -92,15 +92,19 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\lib\c++\armadillo-6.200.3\include;E:\lib\c++\OpenBLAS-v0.2.15-Win32\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\lib\armadillo\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);E:\lib\c++\cbia.lib.lapack.dyn.rel.x86.12\cbia.lib.blas.dyn.rel.x86.12.lib;E:\lib\c++\cbia.lib.lapack.dyn.rel.x86.12\cbia.lib.lapack.dyn.rel.x86.12.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\lib\c++;E:\lib\c++\cbia.lib.lapack.dyn.rel.x86.12;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>E:\lib\c++\libifcoremd.dll;E:\lib\c++\libmmd.dll;E:\lib\c++\svml_dispmd.dll</DelayLoadDLLs>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);blas_win32_MT.lib;lapack_win32_MT.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\LAPACK_Release_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
+    <PostBuildEvent>
+      <Command>copy ..\..\lib\LAPACK_Release_x86\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,15 +128,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\lib\armadillo\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>E:\proj\2015\mixed\parallel-programming\lab5\parallel-programming-lab5\lib\cbia.lib.lapack.dyn.rel.x86.12</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);E:\proj\2015\mixed\parallel-programming\lab5\parallel-programming-lab5\lib\cbia.lib.lapack.dyn.rel.x86.12\cbia.lib.blas.dyn.rel.x86.12.lib;E:\proj\2015\mixed\parallel-programming\lab5\parallel-programming-lab5\lib\cbia.lib.lapack.dyn.rel.x86.12\cbia.lib.lapack.dyn.rel.x86.12.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\LAPACK_Release_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);blas_win32_MT.lib;lapack_win32_MT.lib</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy ..\..\lib\LAPACK_Release_x86\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -166,6 +174,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\armadillo-6.200.3\include\armadillo" />
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\blas_win32_MT.dll" />
+    <None Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\lapack_win32_MT.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\blas_win32_MT.lib" />
+    <Library Include="..\..\..\..\..\..\lib\c++\linear-algebra\LAPACK_Release_x86\lapack_win32_MT.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
