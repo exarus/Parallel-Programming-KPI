@@ -96,7 +96,6 @@ parallel_programming_lab7::Matrix parallel_programming_lab7::Matrix::operator*(c
   #pragma omp parallel for num_threads(2)
   for (int i = 0; static_cast<size_type>(i) < this->size(); i++)
   {
-    #pragma omp parallel for num_threads(2)
     for (int j = 0; static_cast<size_type>(j) < other[i].size(); j++)
     {
       result[i][j] = 0;

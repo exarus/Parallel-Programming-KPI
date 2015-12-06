@@ -23,14 +23,12 @@
 
 using namespace parallel_programming_lab7;
 
-using std::wcerr;
-using std::endl;
 using std::array;
 
 constexpr uint_fast32_t kDefaultMatrixSize = 4;
 constexpr uint_fast32_t kMinSleepTime = 700;
 constexpr uint_fast32_t kTasksCount = 3;
-static_assert(kTasksCount <= std::numeric_limits<int>::max(), "kTasksCount should be less than 2^31");
+static_assert(kTasksCount <= std::numeric_limits<int>::max(), "kTasksCount should be < 2^31");
 
 int _tmain(int argc, TCHAR* argv[])
 {
@@ -41,23 +39,14 @@ int _tmain(int argc, TCHAR* argv[])
   }
   catch (std::invalid_argument)
   {
-    wcerr << _T("Matrix size argument should be an integer. Passed instead: ") << argv[1] << endl;
+    _tprintf(_T("Matrix size argument should be an integer. Passed instead: %s\n"), argv[1]);
     return -1;
   }
-
-  const auto A  = RowVector::Ones(size), 
-             B  = RowVector::Ones(size), 
-             C  = RowVector::Ones(size);
+  const auto A  = RowVector::Ones(size), B  = RowVector::Ones(size), C  = RowVector::Ones(size);
   const auto S  = ColVector::Ones(size);
-  const auto MA = Matrix::Ones(size), 
-             MD = Matrix::Ones(size), 
-             MK = Matrix::Ones(size),
-             ML = Matrix::Ones(size), 
-             MO = Matrix::Ones(size), 
-             MT = Matrix::Ones(size),
-             MR = Matrix::Ones(size), 
-             MW = Matrix::Ones(size), 
-             MV = Matrix::Ones(size);
+  const auto MA = Matrix::Ones(size), MD = Matrix::Ones(size), MK = Matrix::Ones(size), 
+             ML = Matrix::Ones(size), MO = Matrix::Ones(size), MT = Matrix::Ones(size),
+             MR = Matrix::Ones(size), MW = Matrix::Ones(size), MV = Matrix::Ones(size);
   const array<std::function<double()>, kTasksCount> tasks
     {
       [&]{ return (A + B) * (C * (MA * MD)); },
@@ -76,15 +65,21 @@ int _tmain(int argc, TCHAR* argv[])
       },
     };
 
+  _tprintf(omp_in_parallel() ? _T("In parallel region.\n") : _T("Not in parallel region.\n"));
+  omp_set_nested(true);
+
   #pragma omp parallel for num_threads(static_cast<int>(tasks.size()))
   for (int i = 0; static_cast<size_t>(i) < tasks.size(); i++)
   {
+    #pragma omp critical
     _tprintf(_T("Task %i started in Thread %i.\n"), i + 1, omp_get_thread_num());
-    _tprintf(_T("%.1f\n"), tasks[i]());
-    _tprintf(_T("Task %i finished.\n"), i + 1);
-  }
+    
+    auto result = tasks[i]();
 
-  _tprintf(_T("Threads joined."));
+    #pragma omp critical
+    _tprintf(_T("Task %i finished. Result: %.1f\n"), i + 1, result);
+  }
+  _tprintf(_T("Threads joined.\n"));
   return 0;
 }
 
