@@ -21,7 +21,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>tk.exarus.kpi.parallel.Main</mainClass>
+                            <mainClass>tk.exarus.kpi.parallel.java.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

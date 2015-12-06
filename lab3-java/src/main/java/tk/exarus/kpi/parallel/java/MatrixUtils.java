@@ -8,7 +8,7 @@
  * Гунавардана Руслан ІП-31
  * 6 жовтня 2015 року н.э.
  */
-package tk.exarus.kpi.parallel;
+package tk.exarus.kpi.parallel.java;
 
 import org.apache.commons.math3.linear.*;
 

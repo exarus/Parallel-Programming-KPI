@@ -20,7 +20,7 @@ compileJava {
     targetCompatibility = 1.8
 }
 
-mainClassName = 'tk.exarus.kpi.parallel.Main'
+mainClassName = 'tk.exarus.kpi.parallel.java.Main'
 
 jar {
     manifest {

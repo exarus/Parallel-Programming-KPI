@@ -8,17 +8,19 @@
  * Гунавардана Руслан ІП-31
  * 6 жовтня 2015 року н.э.
  */
-package tk.exarus.kpi.parallel;
+package tk.exarus.kpi.parallel.java;
 
 import lombok.val;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
 import static org.apache.commons.math3.linear.MatrixUtils.createRealMatrix;
 import static org.apache.commons.math3.linear.MatrixUtils.createRealVector;
-import static tk.exarus.kpi.parallel.MatrixUtils.max;
-import static tk.exarus.kpi.parallel.MatrixUtils.min;
+import static tk.exarus.kpi.parallel.java.MatrixUtils.max;
+import static tk.exarus.kpi.parallel.java.MatrixUtils.min;
 
 /**
  * Multi-thread matrix expression calculations.
@@ -68,15 +70,13 @@ public final class Main {
      * Thread, that prints to the System.out about self execution.
      */
     private static class PrintingThread extends Thread {
-        private static int lastTaskNumber;
+        private static AtomicInteger lastTaskNumber = new AtomicInteger(1);
 
         private final int taskNumber;
 
         public PrintingThread(Runnable target) {
             super(target);
-            synchronized (PrintingThread.class) {
-                taskNumber = ++lastTaskNumber;
-            }
+            taskNumber = lastTaskNumber.getAndIncrement();
         }
 
         @Override
