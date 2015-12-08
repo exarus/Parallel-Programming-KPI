@@ -1,0 +1,2 @@
+md maven_repository
+mvn install:install-file -Dfile=mpj/mpj.jar -DgroupId=tk.exarus.kpi.parallel.mpi -DartifactId=mpj -Dversion=0.44 -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -DlocalRepositoryPath=..\maven_repository
