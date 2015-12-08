@@ -43,13 +43,13 @@ if __name__ == '__main__':
     S = ones((n, 1))
     MA, MD, MK, ML, MO, MT, MR, MW, MV = (ones((n, n)),) * 9
 
-    processes = (
+    tasks = (
         Thread (name='F1', target=f1, args=(A, B, C, MA, MD)),
         Process(name='F2', target=f2, args=(MK, ML, MO)),
         Process(name='F3', target=f3, args=(MR, S, MT, MW, MV)),
     )
-    for p in processes:
-        p.start()
-    for p in processes:
-        p.join()
+    for t in tasks:
+        t.start()
+    for t in tasks:
+        t.join()
     print('Processes joined.')
