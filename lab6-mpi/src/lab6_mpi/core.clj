@@ -36,5 +36,5 @@
                          MV (broadcast 1.0 [n n])]
                      (+ (emax (mmul MR S)) (emax (add (mmul MT MW) MV)))))]
     (println (str "Process (rank=" rank ") started. Total: " (.Size MPI/COMM_WORLD)))
-    (println (str "Process (rank=" rank ") finished with result: " result)))
+    (println (str "Process (rank=" rank ") finished with result: F" (+ rank 1) "=" result)))
   (MPI/Finalize))
