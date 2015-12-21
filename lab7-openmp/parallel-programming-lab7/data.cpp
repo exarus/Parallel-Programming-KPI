@@ -92,8 +92,6 @@ parallel_programming_lab7::Matrix parallel_programming_lab7::Matrix::operator*(c
 {
   assert((*this)[0].size() == other.size());
   Matrix result(this->size(), other[0].size());
-
-  #pragma omp parallel for num_threads(2)
   for (int i = 0; static_cast<size_type>(i) < this->size(); i++)
   {
     for (int j = 0; static_cast<size_type>(j) < other[i].size(); j++)
@@ -111,8 +109,6 @@ parallel_programming_lab7::ColVector parallel_programming_lab7::Matrix::operator
 {
   assert((*this)[0].size() == vector.size());
   auto result = ColVector::Zeros(this->size());
-
-  #pragma omp parallel for num_threads(2)
   for (int i = 0; static_cast<size_type>(i) < this->size(); i++)
     for (size_type j = 0; j < vector.size(); j++)
       result[i] += vector[j] * (*this)[i][j];
@@ -190,8 +186,6 @@ parallel_programming_lab7::RowVector parallel_programming_lab7::RowVector::opera
 {
   assert(this->size() == matrix.size());
   RowVector result(matrix[0].size());
-
-  #pragma omp parallel for num_threads(2)
   for (int i = 0; i < matrix[0].size(); i++)
   {
     result[i] = 0;
