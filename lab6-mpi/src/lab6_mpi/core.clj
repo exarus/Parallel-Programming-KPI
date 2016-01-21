@@ -18,23 +18,33 @@
   (let [real-args (MPI/Init (into-array String args))
         n (if (empty? real-args) 4 (Integer/parseUnsignedInt (first real-args)))
         rank (.Rank MPI/COMM_WORLD)
-        result (case rank
-                 0 (let [A  (broadcast 1.0 [n])
-                         B  (broadcast 1.0 [n])
-                         C  (broadcast 1.0 [n])
-                         MA (broadcast 1.0 [n n])
-                         MD (broadcast 1.0 [n n])]
-                     (dot (add A B) (mmul C (mmul MA MD))))
-                 1 (let [MK (broadcast 1.0 [n n])
-                         ML (broadcast 1.0 [n n])
-                         MO (broadcast 1.0 [n n])]
-                     (emax (sub (mmul MK ML) MO)))
-                 2 (let [S  (broadcast 1.0 [n])
-                         MR (broadcast 1.0 [n n])
-                         MT (broadcast 1.0 [n n])
-                         MW (broadcast 1.0 [n n])
-                         MV (broadcast 1.0 [n n])]
-                     (+ (emax (mmul MR S)) (emax (add (mmul MT MW) MV)))))]
-    (println (str "Process (rank=" rank ") started. Total: " (.Size MPI/COMM_WORLD)))
-    (println (str "Process (rank=" rank ") finished with result: F" (+ rank 1) "=" result)))
+        comm-size (.Size MPI/COMM_WORLD)
+        result-array (double-array 100)]
+    (println (str "Process (rank=" rank ") started. Total: " comm-size))
+    (if (not= rank 0)
+      (aset result-array 0
+            (case rank
+              1 (let [A (broadcast 1. [n])
+                      B (broadcast 1. [n])
+                      C (broadcast 1. [n])
+                      MA (broadcast 1. [n n])
+                      MD (broadcast 1. [n n])]
+                  (dot (add A B) (mmul C (mmul MA MD))))
+              2 (let [MK (broadcast 1. [n n])
+                      ML (broadcast 1. [n n])
+                      MO (broadcast 1. [n n])]
+                  (emax (sub (mmul MK ML) MO)))
+              3 (let [S (broadcast 1. [n])
+                      MR (broadcast 1. [n n])
+                      MT (broadcast 1. [n n])
+                      MW (broadcast 1. [n n])
+                      MV (broadcast 1. [n n])]
+                  (+ (emax (mmul MR S)) (emax (add (mmul MT MW) MV))))))
+      (.Rsend MPI/COMM_WORLD result-array 0 1 MPI/DOUBLE2 0 0))
+
+    ; get all results and print
+    (if (= rank 0)
+      (doseq [i (range (- comm-size 1))]
+        (if (= (.Recv MPI/COMM_WORLD result-array 0 1 MPI/DOUBLE2 i 0) 1)
+          (println (str "Process (rank=" i ") finished with result: F" (+ i 1) "=" (first result-array)))))))
   (MPI/Finalize))
