@@ -1,2 +1,9 @@
-# lab documentation
-docs
+/tasks
+
+# Shared compiled libs
+/lib
+
+*.pdf
+*.odt
+*.docx
+.~*.docx#
