@@ -51,18 +51,7 @@ int _tmain(int argc, TCHAR* argv[])
     {
       [&]{ return (A + B) * (C * (MA * MD)); },
       [&]{ return (MK * ML - MO).Max(); },
-      [&]
-      {
-        double d1, d2;
-        #pragma omp parallel sections
-        {
-          #pragma omp section
-          d1 = (MR * S).Max();
-          #pragma omp section
-          d2 = (MT * MW + MV).Min();
-        }
-        return d1 + d2;
-      },
+      [&]{ return (MR * S).Max() + (MT * MW + MV).Min(); },
     };
 
   _tprintf(omp_in_parallel() ? _T("In parallel region.\n") : _T("Not in parallel region.\n"));
