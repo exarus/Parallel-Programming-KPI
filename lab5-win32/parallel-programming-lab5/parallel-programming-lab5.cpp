@@ -125,7 +125,7 @@ vector<HANDLE> StartThreads(vector<NumberedFunction<double()>> &tasks)
 
 void WaitAndCloseThreads(const vector<HANDLE> &thread_handles)
 {
-	// Wait until all threads have terminated.
+	// Wait until all threads are terminated.
 	WaitForMultipleObjects(thread_handles.size(), thread_handles.data(), TRUE, INFINITE);
 	_tprintf(_T("Threads joined.\n"));
 
