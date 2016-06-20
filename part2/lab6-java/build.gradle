@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+version = '1.0'
+
+compileJava.options.encoding = 'UTF-8'
+compileJava.targetCompatibility = 1.8
+compileJava.sourceCompatibility = 1.8
+
+mainClassName = 'ua.gunawardana.kpi.pp.lab6.Main'
+
+jar.manifest.attributes(
+        'Main-Class': mainClassName,
+        'Implementation-Title': name,
+        'Implementation-Version': version,
+        provider: 'gradle'
+)
+
+repositories {
+    jcenter()
+}
