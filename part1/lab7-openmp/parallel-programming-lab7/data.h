@@ -2,9 +2,7 @@
 
 namespace parallel_programming_lab7
 {
-  using std::vector;
-
-  class ColVector : public vector<double>
+  class ColVector : public std::vector<double>
   {
     explicit ColVector(const size_type size);
     explicit ColVector(const size_type size, double fill_with);
@@ -16,7 +14,7 @@ namespace parallel_programming_lab7
     double Max() const noexcept;
   };
 
-  class Matrix : public vector<vector<double>>
+  class Matrix : public std::vector<std::vector<double>>
   {
     explicit Matrix(const size_type rows, const size_type cols);
     explicit Matrix(const size_type rows, const size_type cols, double fill_with);
@@ -31,7 +29,7 @@ namespace parallel_programming_lab7
     double Min() const noexcept;
   };
 
-  class RowVector : public vector<double>
+  class RowVector : public std::vector<double>
   {
     explicit RowVector(const size_type size);
     explicit RowVector(const size_type size, double fill_with);
@@ -43,4 +41,3 @@ namespace parallel_programming_lab7
     RowVector operator*(const Matrix &other) const;
   };
 }
-

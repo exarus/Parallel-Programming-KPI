@@ -2,6 +2,7 @@
 #include "assert.h"
 #include "data.h"
 
+using std::vector;
 using std::fill;
 
 parallel_programming_lab7::ColVector::ColVector(const size_type size) : vector(size)
@@ -48,7 +49,7 @@ double parallel_programming_lab7::ColVector::Max() const noexcept
 
 parallel_programming_lab7::Matrix::Matrix(const size_type rows, const size_type cols): vector(rows)
 {
-  assert(1 <= rows && static_cast<int>(rows) <= std::numeric_limits<int>::max() 
+  assert(1 <= rows && static_cast<int>(rows) <= std::numeric_limits<int>::max()
     && 1 <= cols && static_cast<int>(cols) <= std::numeric_limits<int>::max());
   fill(begin(), end(), vector<double>(cols));
 }
@@ -192,7 +193,6 @@ parallel_programming_lab7::RowVector parallel_programming_lab7::RowVector::opera
     for (size_type j = 0; j < this->size(); j++)
       result[i] += (*this)[j] * matrix[j][i];
   }
-    
+
   return result;
 }
-

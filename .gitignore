@@ -1,4 +1,5 @@
-/tasks
+tasks/
+docs/
 
 # Shared compiled libs
 /lib
